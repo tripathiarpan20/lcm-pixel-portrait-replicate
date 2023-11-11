@@ -82,7 +82,7 @@ class Predictor(BasePredictor):
         ),
         negative_prompt: str = Input(
             description="Specify things to not see in the output",
-            default=None,
+            default="bad quality, low quality",
         ),
         strength: float = Input(
             description="Denoising strength", ge=0.0, le=1.0, default=0.5
@@ -95,7 +95,7 @@ class Predictor(BasePredictor):
             description="Number of inference steps", ge=1, le=50, default=10
         ),
         seed: int = Input(
-            description="Random seed. Leave blank to randomize the seed", default=None
+            description="Random seed. Leave blank to randomize the seed", default=42
         ),
     ) -> List[Path]:
         """Run a single prediction on the model"""
