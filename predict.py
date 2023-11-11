@@ -25,7 +25,7 @@ class Predictor(BasePredictor):
     def setup(self) -> None:
         """Load the model into memory to make running multiple predictions efficient"""
         # check if MPS is available OSX only M1/M2/M3 chips
-        device = "cuda"
+        device = "cuda:0"
         # change to torch.float16 to save GPU memory
         torch_dtype = torch.float16
 
