@@ -25,18 +25,9 @@ class Predictor(BasePredictor):
     def setup(self) -> None:
         """Load the model into memory to make running multiple predictions efficient"""
         # check if MPS is available OSX only M1/M2/M3 chips
-        mps_available = hasattr(torch.backends, "mps") and torch.backends.mps.is_available()
-        xpu_available = hasattr(torch, "xpu") and torch.xpu.is_available()
-        device = torch.device(
-            "cuda" if torch.cuda.is_available() else "xpu" if xpu_available else "cpu"
-        )
+        device = "cuda"
         # change to torch.float16 to save GPU memory
         torch_dtype = torch.float16
-
-        if mps_available:
-            device = torch.device("mps")
-            device = "cpu"
-            torch_dtype = torch.float32
 
         self.controlnet_canny = ControlNetModel.from_pretrained(
             "lllyasviel/control_v11p_sd15_canny", torch_dtype=torch_dtype
