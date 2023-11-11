@@ -55,11 +55,11 @@ class Predictor(BasePredictor):
 
         self.pipe.to(device=device, dtype=torch.float16)
 
-        self.compel_proc = Compel(
-            tokenizer=self.pipe.tokenizer,
-            text_encoder=self.pipe.text_encoder,
-            truncate_long_prompts=False,
-        )
+        # self.compel_proc = Compel(
+        #     tokenizer=self.pipe.tokenizer,
+        #     text_encoder=self.pipe.text_encoder,
+        #     truncate_long_prompts=False,
+        # )
 
     def predict(
         self,
@@ -102,8 +102,9 @@ class Predictor(BasePredictor):
             strength = strength, 
             seed = seed,
             height = input_image.size[0],
-            width = input_image.size[1])
-        prompt_embeds = self.compel_proc(prompt)
+            width = input_image.size[1]
+        )
+        # prompt_embeds = self.compel_proc(prompt)
 
         generator = torch.manual_seed(params.seed)
 
@@ -112,7 +113,8 @@ class Predictor(BasePredictor):
         )
         results = self.pipe(
             control_image=control_image,
-            prompt_embeds=prompt_embeds,
+            # prompt_embeds=prompt_embeds,
+            prompt = prompt,
             generator=generator,
             image=input_image,
             strength=params.strength,
