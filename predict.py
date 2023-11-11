@@ -59,7 +59,7 @@ class Predictor(BasePredictor):
         self.pipe.unet.to(memory_format=torch.channels_last)
 
         self.pipe.load_lora_weights(lcm_lora_id)
-        self.load_lora_weights("/content", weight_name="pixel_portraits.safetensors", adapter_name="pixell")
+        self.load_lora_weights("/root", weight_name="pixel_portraits.safetensors", adapter_name="pixell")
         self.pipe.set_adapters(["lora", "pixell"], adapter_weights=[1.0, 1.0])
 
         self.pipe.to(device=device, dtype=torch.float16)
