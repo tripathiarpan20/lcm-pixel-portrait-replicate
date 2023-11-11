@@ -87,9 +87,9 @@ class Predictor(BasePredictor):
         strength: float = Input(
             description="Denoising strength", ge=0.0, le=1.0, default=0.5
         ),
-        guidance_scale: str = Input(
+        guidance_scale: float = Input(
             description="CFG scale for guidance",
-            default=None,
+            ge=0.0, le=10.0, default=8.0
         ),
         num_inference_steps: int = Input(
             description="Number of inference steps", ge=1, le=50, default=10

@@ -14,7 +14,7 @@ build:
     - "controlnet-aux==0.0.7"
     - "peft==0.6.0"
     - "compel==2.0.2"
-    - "pydantic==4.5.0"
+    - "pydantic==1.10.13"
   run:
    - cd /root && wget https://civitai.com/api/download/models/120640 && mv 120640 pixel_portraits.safetensors
 
