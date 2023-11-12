@@ -55,11 +55,11 @@ class Predictor(BasePredictor):
 
         self.pipe.to(device=device, dtype=torch.float16)
 
-        # self.compel_proc = Compel(
-        #     tokenizer=self.pipe.tokenizer,
-        #     text_encoder=self.pipe.text_encoder,
-        #     truncate_long_prompts=False,
-        # )
+        self.compel_proc = Compel(
+            tokenizer=self.pipe.tokenizer,
+            text_encoder=self.pipe.text_encoder,
+            truncate_long_prompts=False,
+        )
 
     def predict(
         self,
@@ -97,7 +97,7 @@ class Predictor(BasePredictor):
         #resizing to square shape because of `RuntimeError: The size of tensor a (_X_) must match the size of tensor b (_Y_) at non-singleton dimension 3` error for non-square images
         input_image = input_image.resize((min_dim,min_dim))
 
-        params = params = InputParams(
+        params = InputParams(
             prompt=prompt,
             negative_prompt = negative_prompt,
             guidance_scale = guidance_scale, 
@@ -107,7 +107,7 @@ class Predictor(BasePredictor):
             height = input_image.size[0],
             width = input_image.size[1]
         )
-        # prompt_embeds = self.compel_proc(prompt)
+        prompt_embeds = self.compel_proc(prompt)
 
         generator = torch.manual_seed(params.seed)
 
@@ -116,8 +116,7 @@ class Predictor(BasePredictor):
         )
         results = self.pipe(
             control_image=control_image,
-            # prompt_embeds=prompt_embeds,
-            prompt = prompt,
+            prompt_embeds=prompt_embeds,
             generator=generator,
             image=input_image,
             strength=params.strength,
