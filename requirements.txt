@@ -1,6 +1,6 @@
 git+https://github.com/huggingface/diffusers.git@6110d7c95f630479cf01340cc8a8141c1e359f09
 transformers==4.34.1
-torch==2.1.0
+torch==2.0.1
 accelerate==0.24.0
 controlnet-aux==0.0.7
 peft==0.6.0
