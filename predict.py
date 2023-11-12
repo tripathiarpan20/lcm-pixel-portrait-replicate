@@ -88,46 +88,56 @@ class Predictor(BasePredictor):
         seed: int = Input(
             description="Random seed. Leave blank to randomize the seed", default=42
         ),
+        canny_low_threshold: float = Input(
+            description="Canny low threshold", ge=0.0, le=1.0, default=0.31
+        ),
+        canny_high_threshold: float = Input(
+            description="Canny high threshold", ge=0.0, le=1.0, default=0.78
+        ),
+        controlnet_scale: float = Input(
+            description="Controlnet scale", ge=0.0, le=1.0, default=0.8
+        ),
+        controlnet_start: float = Input(
+            description="Controlnet start", ge=0.0, le=1.0, default=0.0
+        ),
+        controlnet_end: float = Input(
+            description="Controlnet end", ge=0.0, le=1.0, default=1.0
+        ),
     ) -> List[Path]:
         """Run a single prediction on the model"""
+        lcm_steps = 50
+
         if seed is None:
             seed = int.from_bytes(os.urandom(2), "big")
         input_image = Image.open(str(image))
         min_dim = min(input_image.size)
         #resizing to square shape because of `RuntimeError: The size of tensor a (_X_) must match the size of tensor b (_Y_) at non-singleton dimension 3` error for non-square images
         input_image = input_image.resize((min_dim,min_dim))
+        height = input_image.size[0]
+        width = input_image.size[1]
 
-        params = InputParams(
-            prompt=prompt,
-            negative_prompt = negative_prompt,
-            guidance_scale = guidance_scale, 
-            steps = num_inference_steps,
-            strength = strength, 
-            seed = seed,
-            height = input_image.size[0],
-            width = input_image.size[1]
-        )
         prompt_embeds = self.compel_proc(prompt)
 
-        generator = torch.manual_seed(params.seed)
+        generator = torch.manual_seed(seed)
 
         control_image = self.canny_torch(
-            input_image, params.canny_low_threshold, params.canny_high_threshold
+            input_image, canny_low_threshold, canny_high_threshold
         )
         results = self.pipe(
             control_image=control_image,
             prompt_embeds=prompt_embeds,
+            negative_prompt=negative_prompt,
             generator=generator,
             image=input_image,
-            strength=params.strength,
-            num_inference_steps=params.steps,
-            guidance_scale=params.guidance_scale,
-            width=params.width,
-            height=params.height,
+            strength=strength,
+            num_inference_steps=num_inference_steps,
+            guidance_scale=guidance_scale,
+            width=width,
+            height=height,
             output_type="pil",
-            controlnet_conditioning_scale=params.controlnet_scale,
-            control_guidance_start=params.controlnet_start,
-            control_guidance_end=params.controlnet_end,
+            controlnet_conditioning_scale=controlnet_scale,
+            control_guidance_start=controlnet_start,
+            control_guidance_end=controlnet_end,
         )
         result_image = results.images[0]
 

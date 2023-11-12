@@ -14,4 +14,3 @@ class InputParams(BaseModel):
     controlnet_end: float = 1.0
     canny_low_threshold: float = 0.31
     canny_high_threshold: float = 0.78
-    debug_canny: bool = False
