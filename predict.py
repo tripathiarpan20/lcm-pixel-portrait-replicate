@@ -93,6 +93,9 @@ class Predictor(BasePredictor):
         if seed is None:
             seed = int.from_bytes(os.urandom(2), "big")
         input_image = Image.open(str(image))
+        min_dim = min(input_image.size)
+        #resizing to square shape because of `RuntimeError: The size of tensor a (_X_) must match the size of tensor b (_Y_) at non-singleton dimension 3` error for non-square images
+        input_image = input_image.resize((min_dim,min_dim))
 
         params = params = InputParams(
             prompt=prompt,
